@@ -8,6 +8,21 @@ var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ), 
 	routes = require( 'routes' );
 
+function addEventListener( to, event, listener ) {
+
+	if( to.attachEvent ) {
+
+	    to.attachEvent( event, listener );
+	} else if( to.addEventListener ) {
+
+	    to.addEventListener( event, listener, true);
+	}
+	else {
+	    
+	    to[ 'on' + event ] = listener;
+	}
+}
+
 function bigwheel( settings ) {
 
 	if( !( this instanceof bigwheel ) )
@@ -17,10 +32,10 @@ function bigwheel( settings ) {
 
 	s.postHash = s.postHash || '!';
 
-	this.onURL = this.onURL.bind( this );
-
 	this.router = routes();
 	this.vm = vm( this.s );
+
+	this.onResize();
 };
 
 bigwheel.prototype = {
@@ -58,7 +73,9 @@ bigwheel.prototype = {
 			}
 		}
 
-		window.addEventListener( 'hashchange', this.onURL );
+
+		addEventListener( window, 'hashchange', this.onURL.bind( this ) );
+		addEventListener( window, 'resize', this.onResize.bind( this ) );
 
 		// force a hash change to start things up
 		this.onURL();
@@ -131,6 +148,11 @@ bigwheel.prototype = {
 
 			this.show( s[ '404' ] );
 		}
+	},
+
+	onResize: function() {
+
+		this.vm.resize( window.innerWidth, window.innerHeight );
 	},
 
 	onURL: function() {
