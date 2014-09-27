@@ -17,8 +17,7 @@ function addEventListener( to, event, listener ) {
 	} else if( to.addEventListener ) {
 
 	    to.addEventListener( event, listener, true);
-	}
-	else {
+	} else {
 	    
 	    to[ 'on' + event ] = listener;
 	}
