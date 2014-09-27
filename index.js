@@ -1,6 +1,7 @@
 //TODO: think of how to handle params from router
 
-//settings
+// settings
+// postHash
 // routes start with / you can define a 404
 
 var vm = require( 'bw-vm' ),
@@ -11,7 +12,9 @@ function bigwheel( settings ) {
 	if( !( this instanceof bigwheel ) )
 		return new bigwheel( settings );
 
-	this.s = settings || {};
+	var s = this.s = settings || {};
+
+	s.postHash = s.postHash || '!';
 
 	this.onURL = this.onURL.bind( this );
 
@@ -76,7 +79,7 @@ bigwheel.prototype = {
 		if( to[ 0 ] != '/' )
 			to = '/' + to;
 
-		window.location.hash = to;
+		window.location.hash = this.s.postHash + to;
 	},
 
 	show: function( content ) {
@@ -128,8 +131,10 @@ bigwheel.prototype = {
 
 		if( window.location.hash != '' ) {
 
-			cRoute = window.location.hash.substr( 1 );
+			cRoute = window.location.hash.substr( 1 + this.s.postHash.length );
 		}
+
+		console.log( cRoute );
 
 		this.doRoute( this.router.match( cRoute ) );
 	}

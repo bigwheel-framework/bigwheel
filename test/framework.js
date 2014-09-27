@@ -11,5 +11,6 @@ module.exports = bigwheel( {
 
 	'/': testSection( 'info', '#00CAFE', '/about' ),
 	'/about': testSection( 'about', '#CAFE00', '/contact' ),
-	'/contact': testSection( 'contact', '#CA00FE', '/' )
+	'/contact': testSection( 'contact', '#CA00FE', '/' ),
+	'404': testSection( '404', '#CA0000', '/' )
 }).init();
