@@ -5,6 +5,7 @@
 // routes start with / you can define a 404
 
 var vm = require( 'bw-vm' ),
+	viewmediator = require( 'bw-viewmediator' ), 
 	routes = require( 'routes' );
 
 function bigwheel( settings ) {
@@ -86,18 +87,25 @@ bigwheel.prototype = {
 
 		//check if content is an array or function or object
 		
-		if( typeof content == 'object' ) {
+		if( Array.isArray( content ) ) {
+
+			var contents = [];
+
+			for( var i = 0, len = content.length; i < len; i++ ) {
+
+				if( typeof content[ i ] == 'object' ) 
+					contents[ i ] = content[ i ];
+				else if( typeof content[ i ] == 'function' )
+					contents[ i ] = new content[ i ];
+			}
+
+			this.doShow( viewmediator.apply( undefined, contents ) );
+		} else if( typeof content == 'object' ) {
 
 			this.doShow( content );
 		} else if( typeof content == 'function' ) {
 
 			this.doShow( new content );
-		} else if( Array.isArray( content ) ) {
-
-			for( var i = 0, len = content.length; i < len; i++ ) {
-
-				this.show( content[ i ] );
-			}
 		}
 	},
 

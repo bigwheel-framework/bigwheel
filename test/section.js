@@ -11,7 +11,7 @@ module.exports = function( name, colour, toRoute ) {
 			el.style.position = 'absolute';
 			el.style.left = this.el.style.top = '0px';
 			el.style.display = 'none';
-			el.innerText = name;
+			el.innerHTML = name;
 			document.body.appendChild( el );
 
 			el.onclick = function() {
