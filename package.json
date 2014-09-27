@@ -1,0 +1,27 @@
+{
+  "name": "bigwheel",
+  "version": "1.0.0",
+  "description": "bigwheel is an mvc framework that focuses on animation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MikkoH/bigwheel.git"
+  },
+  "keywords": [
+    "bigwheel",
+    "mvc",
+    "animation"
+  ],
+  "author": "Mikko Haapoja <me@mikkoh.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MikkoH/bigwheel/issues"
+  },
+  "homepage": "https://github.com/MikkoH/bigwheel",
+  "dependencies": {
+    "routes": "^1.2.0"
+  }
+}
