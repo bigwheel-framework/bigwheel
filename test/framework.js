@@ -9,11 +9,11 @@ var bigwheel = require( '../' ),
 
 module.exports = bigwheel( {
 
-	'/': testSection( 'info', '#00CAFE', '/about' ),
+	'/': testSection( '#00CAFE', '/about' ),
 
-	'/about': [ testSection( 'about 1', 'rgba( 255, 0, 0, 0.5 )', '/contact' ), 
-				testSection( '<br />about 2', 'rgba( 0, 0, 255, 0.5 )', '/contact' ) ],
+	'/about': [ testSection( 'rgba( 255, 0, 0, 0.5 )', '/contact' ), 
+				testSection( 'rgba( 0, 0, 255, 0.5 )', '/contact' ) ],
 
-	'/contact': testSection( 'contact', '#CA00FE', '/' ),
-	'404': testSection( '404', '#CA0000', '/' )
+	'/contact': testSection( '#CA00FE', '/' ),
+	'404': testSection( '#CA0000', '/' )
 }).init();

@@ -104,7 +104,7 @@ bigwheel.prototype = {
 		window.location.hash = this.s.postHash + to;
 	},
 
-	show: function( content ) {
+	show: function( content, data ) {
 
 		//check if content is an array or function or object
 		
@@ -120,13 +120,13 @@ bigwheel.prototype = {
 					contents[ i ] = new content[ i ];
 			}
 
-			this.doShow( viewmediator.apply( undefined, contents ) );
+			this.doShow( viewmediator.apply( undefined, contents ), data );
 		} else if( typeof content == 'object' ) {
 
-			this.doShow( content );
+			this.doShow( content, data );
 		} else if( typeof content == 'function' ) {
 
-			this.doShow( new content );
+			this.doShow( new content, data );
 		}
 	},
 
@@ -135,9 +135,9 @@ bigwheel.prototype = {
 		this.vm.resize( w, h );
 	},
 
-	doShow: function( content ) {
+	doShow: function( content, data ) {
 
-		this.vm.show( content );
+		this.vm.show( content, data );
 	},
 
 	doRoute: function( data ) {
@@ -152,10 +152,10 @@ bigwheel.prototype = {
 
 		if( section ) {
 
-			this.show( section );
-		} else if( s[ '404' ] ) {
+			this.show( section, data );
+		} else if( s[ '404' ], data ) {
 
-			this.show( s[ '404' ] );
+			this.show( s[ '404' ], data );
 		}
 	},
 

@@ -1,17 +1,18 @@
-module.exports = function( name, colour, toRoute ) {
+module.exports = function( colour, toRoute ) {
 
 	return {
 
-		init: function( onComplete ) {
+		init: function( data, onComplete ) {
 
 			console.log( 'init', name );
+			console.log( data );
 
 			var el = this.el = document.createElement( 'div' );
 			el.style.background = colour;
 			el.style.position = 'absolute';
 			el.style.left = this.el.style.top = '0px';
 			el.style.display = 'none';
-			el.innerHTML = name;
+			el.innerHTML = data.route;
 			document.body.appendChild( el );
 
 			el.onclick = function() {
