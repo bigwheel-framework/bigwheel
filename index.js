@@ -2,6 +2,7 @@
 
 // settings
 // postHash
+// autoResize
 // routes start with / you can define a 404
 
 var vm = require( 'bw-vm' ),
@@ -31,11 +32,13 @@ function bigwheel( settings ) {
 	var s = this.s = settings || {};
 
 	s.postHash = s.postHash || '!';
+	s.autoResize = s.autoResize === undefined ? true : s.autoResize;
 
 	this.router = routes();
 	this.vm = vm( this.s );
 
-	this.onResize();
+	if( s.autoResize )
+		this.onResize();
 };
 
 bigwheel.prototype = {
@@ -75,7 +78,9 @@ bigwheel.prototype = {
 
 
 		addEventListener( window, 'hashchange', this.onURL.bind( this ) );
-		addEventListener( window, 'resize', this.onResize.bind( this ) );
+
+		if( s.autoResize )
+			addEventListener( window, 'resize', this.onResize.bind( this ) );
 
 		// force a hash change to start things up
 		this.onURL();
@@ -126,6 +131,11 @@ bigwheel.prototype = {
 		}
 	},
 
+	resize: function( w, h ) {
+
+		this.vm.resize( w, h );
+	},
+
 	doShow: function( content ) {
 
 		this.vm.show( content );
@@ -152,7 +162,7 @@ bigwheel.prototype = {
 
 	onResize: function() {
 
-		this.vm.resize( window.innerWidth, window.innerHeight );
+		this.resize( window.innerWidth, window.innerHeight );
 	},
 
 	onURL: function() {
