@@ -4,6 +4,9 @@ module.exports = function( colour, toRoute ) {
 
 		init: function( data, onComplete ) {
 
+			if( !onComplete && typeof data == 'function' )
+				onComplete = data;
+
 			console.log( 'init', name );
 			console.log( data );
 

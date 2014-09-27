@@ -153,7 +153,7 @@ bigwheel.prototype = {
 		if( section ) {
 
 			this.show( section, data );
-		} else if( s[ '404' ], data ) {
+		} else if( s[ '404' ] ) {
 
 			this.show( s[ '404' ], data );
 		}
@@ -172,8 +172,6 @@ bigwheel.prototype = {
 
 			cRoute = window.location.hash.substr( 1 + this.s.postHash.length );
 		}
-
-		console.log( cRoute );
 
 		this.doRoute( this.router.match( cRoute ) );
 	}
