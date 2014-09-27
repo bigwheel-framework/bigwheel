@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/MikkoH/bigwheel",
   "dependencies": {
+    "bw-vm": "git://github.com/MikkoH/bw-vm",
     "routes": "^1.2.0"
   }
 }
