@@ -1,4 +1,4 @@
-//TODO: if section is an object then go through if it's a function then instantiate
+//TODO: think of how to handle params from router
 
 //settings
 // routes start with / you can define a 404
