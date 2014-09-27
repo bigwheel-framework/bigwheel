@@ -1,4 +1,4 @@
 bigwheel
 ========
 
-bigwheel is an mvc framework that focuses on animation
+bigwheel is an mvc framework without the mc ;) majorly focusing on animation
