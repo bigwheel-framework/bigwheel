@@ -24,6 +24,7 @@
   "dependencies": {
     "bw-viewmediator": "git://github.com/MikkoH/bw-viewmediator",
     "bw-vm": "git://github.com/MikkoH/bw-vm",
+    "eventlistener": "0.0.1",
     "routes": "^1.2.0"
   }
 }

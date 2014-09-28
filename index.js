@@ -1,4 +1,4 @@
-//TODO: think of how to handle params from router
+//TODO: separate out router just for future maintainability
 
 // settings
 // postHash
@@ -7,21 +7,8 @@
 
 var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ), 
+	eventlistener = require( 'eventlistener' ),
 	routes = require( 'routes' );
-
-function addEventListener( to, event, listener ) {
-
-	if( to.attachEvent ) {
-
-	    to.attachEvent( event, listener );
-	} else if( to.addEventListener ) {
-
-	    to.addEventListener( event, listener, true);
-	} else {
-	    
-	    to[ 'on' + event ] = listener;
-	}
-}
 
 function bigwheel( settings ) {
 
@@ -75,11 +62,10 @@ bigwheel.prototype = {
 			}
 		}
 
-
-		addEventListener( window, 'hashchange', this.onURL.bind( this ) );
+		eventlistener.add( window, 'hashchange', this.onURL.bind( this ) );
 
 		if( s.autoResize )
-			addEventListener( window, 'resize', this.onResize.bind( this ) );
+			eventlistener.add( window, 'resize', this.onResize.bind( this ) );
 
 		// force a hash change to start things up
 		this.onURL();
