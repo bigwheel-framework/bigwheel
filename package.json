@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/MikkoH/bigwheel",
   "dependencies": {
+    "bw-router": "git://github.com/MikkoH/bw-router",
     "bw-viewmediator": "git://github.com/MikkoH/bw-viewmediator",
     "bw-vm": "git://github.com/MikkoH/bw-vm",
-    "eventlistener": "0.0.1",
-    "routes": "^1.2.0"
+    "eventlistener": "0.0.1"
   }
 }
