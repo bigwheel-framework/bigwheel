@@ -9,32 +9,45 @@ var vm = require( 'bw-vm' ),
 	router = require( 'bw-router' ),
 	eventlistener = require( 'eventlistener' );
 
-function bigwheel( settings ) {
+function bigwheel( settingsFunc ) {
 
 	if( !( this instanceof bigwheel ) )
-		return new bigwheel( settings );
+		return new bigwheel( settingsFunc );
 
-	var s = this.s = settings || {};
-
-	s.autoResize = s.autoResize === undefined ? true : s.autoResize;
-
-	// setup the router
-	this.onRouteCallBack = settings.onRoute;
-	settings.onRoute = this.show.bind( this );
-	this.router = router( settings );
-
-	// setup the view manager
-	this.vm = vm( this.s );
-
-	if( s.autoResize )
-		this.onResize();
+	this.settingsFunc = settingsFunc;	
 };
 
 bigwheel.prototype = {
 
 	init: function() {
 
-		this.router.init();
+		var onSettingComplete = function( settings ) {
+
+			var s = this.s = settings || {};
+
+			s.autoResize = s.autoResize === undefined ? true : s.autoResize;
+
+			// setup the router
+			this.onRouteCallBack = settings.onRoute;
+			settings.onRoute = this.show.bind( this );
+			this.router = router( settings );
+
+			// setup the view manager
+			this.vm = vm( this.s );
+
+			if( s.autoResize )
+				this.onResize();
+
+			this.router.init();
+		}.bind( this );
+
+
+		var promise = this.settingsFunc( onSettingComplete );
+
+		if( promise && promise.then ) {
+
+			promise.then( onSettingComplete );
+		}
 
 		return this;
 	},

@@ -1,4 +1,5 @@
-var bigwheel = require( '../' ),
+var promise = require( 'promise' ),
+	bigwheel = require( '../' ),
 	testSection = require( './section' );
 
 // var fw = bigwheel();
@@ -7,13 +8,23 @@ var bigwheel = require( '../' ),
 // fw.add( '/about', testSection( 'about', '#CAFE00', fw, '/contact' ) );
 // fw.add( '/contact', testSection( 'contact', '#CA00FE', fw, '/' ) );
 
-module.exports = bigwheel( {
+module.exports = bigwheel( function() {
 
-	'/': testSection( '#00CAFE', '/about' ),
+	return new promise( function( onOk, onErr ) {
 
-	'/about': [ testSection( 'rgba( 255, 0, 0, 0.5 )', '/contact' ), 
-				testSection( 'rgba( 0, 0, 255, 0.5 )', '/contact' ) ],
+		onOk( {
 
-	'/contact': testSection( '#CA00FE', '/' ),
-	'404': testSection( '#CA0000', '/' )
+			'/': testSection( '#00CAFE', '/about' ),
+
+			'/about': [ testSection( 'rgba( 255, 0, 0, 0.5 )', '/contact' ), 
+						testSection( 'rgba( 0, 0, 255, 0.5 )', '/contact' ) ],
+
+			// fancy: model( bigwheelbars )( container )( genericview ),
+			// // fancy: model( bigwheelbars )( container( '#thing' ) )( genericview ),
+
+			'/contact': testSection( '#CA00FE', '/' ),
+			'404': testSection( '#CA0000', '/' )
+		});
+	});
+	
 }).init();
