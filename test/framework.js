@@ -21,9 +21,11 @@ var promise = require( 'promise' ),
 // }).init();
 
 
-module.exports = bigwheel( function( cb ) {
+module.exports = bigwheel( function( onComplete ) {
 
-	cb( {
+	// do something fancy here if you'd like
+
+	onComplete( {
 
 		'/': testSection( '#00CAFE', '/about' ),
 
