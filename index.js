@@ -7,7 +7,6 @@
 var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ),
 	router = require( 'bw-router' ),
-	eventlistener = require( 'eventlistener' ),
 	on = require( 'dom-event' );
 
 function bigwheel( settingsFunc ) {
