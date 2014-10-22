@@ -25,7 +25,7 @@
     "bw-router": "git://github.com/MikkoH/bw-router",
     "bw-viewmediator": "git://github.com/MikkoH/bw-viewmediator",
     "bw-vm": "git://github.com/MikkoH/bw-vm",
-    "eventlistener": "0.0.1"
+    "dom-event": "git://github.com/mikkoh/dom-event"
   },
   "devDependencies": {
     "promise": "^6.0.1"

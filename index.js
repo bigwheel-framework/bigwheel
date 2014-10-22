@@ -7,7 +7,8 @@
 var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ),
 	router = require( 'bw-router' ),
-	eventlistener = require( 'eventlistener' );
+	eventlistener = require( 'eventlistener' ),
+	on = require( 'dom-event' );
 
 function bigwheel( settingsFunc ) {
 
@@ -35,9 +36,13 @@ bigwheel.prototype = {
 			// setup the view manager
 			this.vm = vm( this.s );
 
-			if( s.autoResize )
-				this.onResize();
+			if( s.autoResize ) {
 
+				on( window, 'resize', this.onResize.bind( this ) );
+
+				this.onResize();
+			}
+			
 			this.router.init();
 		}.bind( this );
 
