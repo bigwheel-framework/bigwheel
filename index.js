@@ -15,8 +15,6 @@ function bigwheel( settingsFunc ) {
 		return new bigwheel( settingsFunc );
 
 	this.settingsFunc = settingsFunc;
-
-	this.init();
 };
 
 bigwheel.prototype = {
