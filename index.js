@@ -14,7 +14,9 @@ function bigwheel( settingsFunc ) {
 	if( !( this instanceof bigwheel ) )
 		return new bigwheel( settingsFunc );
 
-	this.settingsFunc = settingsFunc;	
+	this.settingsFunc = settingsFunc;
+
+	this.init();
 };
 
 bigwheel.prototype = {
@@ -23,14 +25,20 @@ bigwheel.prototype = {
 
 		var onSettingComplete = function( settings ) {
 
-			var s = this.s = settings || {};
+			var s = this.s = settings;
+
+			if( s === undefined )
+				throw new Error( 'Your settings function must return a settings Object' );
+
+			if( s.routes === undefined )
+				throw new Error( 'Your settings object must define routes' );
 
 			s.autoResize = s.autoResize === undefined ? true : s.autoResize;
 
 			// setup the router
 			this.onRouteCallBack = settings.onRoute;
-			settings.onRoute = this.show.bind( this );
-			this.router = router( settings );
+			settings.routes.onRoute = this.show.bind( this );
+			this.router = router( settings.routes );
 
 			// setup the view manager
 			this.vm = vm( this.s );
@@ -48,12 +56,8 @@ bigwheel.prototype = {
 
 		var promise = this.settingsFunc( onSettingComplete );
 
-		if( promise && promise.then ) {
-
+		if( promise && promise.then )
 			promise.then( onSettingComplete );
-		}
-
-		return this;
 	},
 
 	add: function( route, section ) {
