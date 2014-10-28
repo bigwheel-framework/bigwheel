@@ -8,6 +8,8 @@ module.exports = bigwheel( function( onComplete ) {
 
 	onComplete( {
 
+		initSection: require( './preloader' ),
+
 		routes: {
 
 			'/': testSection( '#00CAFE', '/about' ),

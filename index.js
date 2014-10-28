@@ -50,7 +50,10 @@ bigwheel.prototype = {
 				this.onResize();
 			}
 			
-			this.router.init();
+			if( s.initSection )
+				this.show( s.initSection.bind( undefined, this.router.init.bind( this.router ) ) );
+			else
+				this.router.init();
 		}.bind( this );
 
 
