@@ -55,10 +55,12 @@ bigwheel.prototype = {
 		}.bind( this );
 
 
-		var promise = this.settingsFunc( onSettingComplete );
+		var rVal = this.settingsFunc( onSettingComplete );
 
-		if( promise && promise.then )
-			promise.then( onSettingComplete );
+		if( rVal && rVal.then )
+			rVal.then( onSettingComplete );
+		else if( rVal && rVal.routes )
+			onSettingComplete( rVal );
 	},
 
 	add: function( route, section ) {
