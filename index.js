@@ -8,7 +8,20 @@ var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ),
 	router = require( 'bw-router' ),
 	on = require( 'dom-event' );
-
+/**
+ * When instantiating bigwheel you must pass in a setup function.
+ *
+ * In this function you may do any preparation that must be done for your
+ * application such as creating a global Canvas element or something else.
+ *
+ * The setup function must either return a settings object for bigwheel or
+ * this function must receive a callback which you will call with the settings
+ * object. Furthermore you can pass back a promise from this settings function
+ * which will receive the settings object.
+ * 
+ * @param  {Function} settingsFunc This settings function will be used to
+ * initialize bigwheel.
+ */
 function bigwheel( settingsFunc ) {
 
 	if( !( this instanceof bigwheel ) )
