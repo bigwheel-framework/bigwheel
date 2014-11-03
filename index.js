@@ -45,6 +45,7 @@ var vm = require( 'bw-vm' ),
  * }
  * ```
  * 
+ * @class bigwheel
  * @param  {Function} settingsFunc This settings function will be used to
  * initialize bigwheel.
  */
