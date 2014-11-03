@@ -1,8 +1,4 @@
-// settings
-// postHash
-// autoResize
-// onRoute
-// routes start with / you can define a 404
+/** @module bigwheel */
 
 var vm = require( 'bw-vm' ),
 	viewmediator = require( 'bw-viewmediator' ),
@@ -18,6 +14,36 @@ var vm = require( 'bw-vm' ),
  * this function must receive a callback which you will call with the settings
  * object. Furthermore you can pass back a promise from this settings function
  * which will receive the settings object.
+ *
+ * The following documents what can be passed in the settings object:
+ * ```javascript
+ * {
+ * 	///// REQUIRED /////
+ *
+ * 	// routes defines all the routes for your website it can also define a 
+ * 	// 404 section which will be opened if the route is incorrect
+ *  routes: {
+ *
+ * 		'/': someSection,
+ * 		'/someOther': someOtherSection,
+ * 		'404': sectionFourOhFour
+ *  },
+ *  
+ *  ///// OPTIONAL /////
+ *  initSection: preSection, // this could be a section that is run always
+ *  						 // before routes are even evaluated. This is
+ *  						 // usefulf for site preloaders or landing pages
+ *  						 // such as age verification (something the user
+ *  						 // must see)
+ * 
+ * 	autoResize: true, // by default this value is true. When this value is
+ * 					  // true a resize listener is added to the window
+ * 					  // whenever the window changes size it's width and
+ * 					  // height is passed to all instantiated sections
+ * 	postHash: '#!', // this string is appended before the route. 
+ * 					// by default it's value is '#!'
+ * }
+ * ```
  * 
  * @param  {Function} settingsFunc This settings function will be used to
  * initialize bigwheel.
@@ -32,6 +58,10 @@ function bigwheel( settingsFunc ) {
 
 bigwheel.prototype = {
 
+	/**
+	 * init must be called to start the framework. This was done to allow for
+	 * a developer to have full control of when bigwheel starts doing it's thing.
+	 */
 	init: function() {
 
 		var onSettingComplete = function( settings ) {
@@ -76,13 +106,16 @@ bigwheel.prototype = {
 			onSettingComplete( rVal );
 	},
 
-	add: function( route, section ) {
-
-		this.router.add( route, section );
-
-		return this;
-	},
-
+	/**
+	 * go can be called to go to another section.
+	 * 
+	 * @param  {String} to This is the route you want to go to.
+	 *
+	 * @example
+	 * ```javascript
+	 * framework.go( '/landing' );
+	 * ```
+	 */
 	go: function( to ) {
 
 		this.router.go( to );
@@ -117,6 +150,18 @@ bigwheel.prototype = {
 		}
 	},
 
+	/**
+	 * Resize can be called at any time. The values passed in for
+	 * width and height will be passed to the currently instantiated
+	 * sections.
+	 *
+	 * If `autoResize` was not passed in or it was true then resize
+	 * will automatically be called when the window of the browser
+	 * resizes.
+	 * 
+	 * @param  {Number} w width value you'd like to pass to the sections
+	 * @param  {Number} h height value you'd like to pass to the sections
+	 */
 	resize: function( w, h ) {
 
 		this.vm.resize( w, h );
