@@ -123,10 +123,12 @@ bigwheel.prototype = {
 	},
 
 	show: function( content, data ) {
-
+		
+		if (data && data.route==this.lastRoute) return;
 		// this is the original router callback passed in
 		if( this.onRouteCallBack )
 			this.onRouteCallBack( content, data );
+
 
 		// check if content is an array or function or object
 		if( Array.isArray( content ) ) {
@@ -149,6 +151,8 @@ bigwheel.prototype = {
 
 			this.doShow( new content, data );
 		}
+
+		this.lastRoute = (data) ? data.route : undefined;
 	},
 
 	/**
