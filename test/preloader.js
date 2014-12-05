@@ -7,7 +7,7 @@ function preloader( onComplete ) {
 
 preloader.prototype = {
 
-	init: function( onComplete ) {
+	init: function( req, onComplete ) {
 
 		console.log( 'started simulating preload' );
 		setTimeout( this.preloadComplete, 3000 );
@@ -15,13 +15,13 @@ preloader.prototype = {
 		onComplete();
 	},
 
-	aniIn: function( onComplete ) {
+	aniIn: function( req, onComplete ) {
 
 		console.log( 'preloader ani in' );
 		onComplete();
 	},
 
-	aniOut: function( onComplete ) {
+	aniOut: function( req, onComplete ) {
 
 		console.log( 'preloader ani out' );
 		onComplete();
