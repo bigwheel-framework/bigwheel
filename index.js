@@ -76,6 +76,7 @@ bigwheel.prototype = {
 				throw new Error( 'Your settings object must define routes' );
 
 			s.autoResize = s.autoResize === undefined ? true : s.autoResize;
+			s.duplicate = s.duplicate === undefined ? true : s.duplicate;
 
 			// setup the router
 			this.onRouteCallBack = settings.onRoute;
@@ -148,10 +149,12 @@ bigwheel.prototype = {
 	},
 
 	show: function( content, data ) {
-
+		
+		if (!this.s.duplicate && data && data.route==this.lastRoute) return;
 		// this is the original router callback passed in
 		if( this.onRouteCallBack )
 			this.onRouteCallBack( content, data );
+
 
 		// check if content is an array or function or object
 		if( Array.isArray( content ) ) {
@@ -174,6 +177,8 @@ bigwheel.prototype = {
 
 			this.doShow( new content, data );
 		}
+
+		this.lastRoute = (data) ? data.route : undefined;
 	},
 
 	doShow: function( content, data ) {
