@@ -122,6 +122,31 @@ bigwheel.prototype = {
 		this.router.go( to );
 	},
 
+	/**
+	 * Destroys bighweel
+	 */
+	destroy: function() {
+
+		this.router.destroy();
+	},
+
+	/**
+	 * Resize can be called at any time. The values passed in for
+	 * width and height will be passed to the currently instantiated
+	 * sections.
+	 *
+	 * If `autoResize` was not passed in or it was true then resize
+	 * will automatically be called when the window of the browser
+	 * resizes.
+	 * 
+	 * @param  {Number} w width value you'd like to pass to the sections
+	 * @param  {Number} h height value you'd like to pass to the sections
+	 */
+	resize: function( w, h ) {
+
+		this.vm.resize( w, h );
+	},
+
 	show: function( content, data ) {
 
 		// this is the original router callback passed in
@@ -149,23 +174,6 @@ bigwheel.prototype = {
 
 			this.doShow( new content, data );
 		}
-	},
-
-	/**
-	 * Resize can be called at any time. The values passed in for
-	 * width and height will be passed to the currently instantiated
-	 * sections.
-	 *
-	 * If `autoResize` was not passed in or it was true then resize
-	 * will automatically be called when the window of the browser
-	 * resizes.
-	 * 
-	 * @param  {Number} w width value you'd like to pass to the sections
-	 * @param  {Number} h height value you'd like to pass to the sections
-	 */
-	resize: function( w, h ) {
-
-		this.vm.resize( w, h );
 	},
 
 	doShow: function( content, data ) {
