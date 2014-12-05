@@ -1,6 +1,6 @@
 {
   "name": "bigwheel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "bigwheel is an mvc framework that focuses on animation",
   "main": "index.js",
   "scripts": {
