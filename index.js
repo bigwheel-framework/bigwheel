@@ -123,7 +123,6 @@ bigwheel.prototype = {
 	},
 
 	show: function( content, data ) {
-		if (data && !data.duplicate && data.route==this.lastRoute) return;
 		// this is the original router callback passed in
 		if( this.onRouteCallBack )
 			this.onRouteCallBack( content, data );
@@ -151,7 +150,6 @@ bigwheel.prototype = {
 			this.doShow( new content, data );
 		}
 
-		this.lastRoute = (data) ? data.route : undefined;
 	},
 
 	/**
