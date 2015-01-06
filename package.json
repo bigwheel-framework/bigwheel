@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/MikkoH/bigwheel",
   "dependencies": {
-    "bw-router": "git://github.com/MikkoH/bw-router",
+    "bw-router": "git://github.com/njam3/bw-router",
     "bw-viewmediator": "git://github.com/MikkoH/bw-viewmediator",
     "bw-vm": "git://github.com/MikkoH/bw-vm",
     "dom-event": "git://github.com/mikkoh/dom-event"
