@@ -49,10 +49,6 @@ The following documents what can be passed in the settings object:
 					  // height is passed to all instantiated sections
 	postHash: '#!', // this string is appended before the route. 
 					// by default it's value is '#!'
-	duplicate: true, // by default this value is true. When this value is
-					  // true, you will be able to go to the same route
-					  // multiple times in a row, useful for routes 
-					  // that contain wild cards
 }
 ```
 
