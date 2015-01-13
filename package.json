@@ -22,12 +22,13 @@
   },
   "homepage": "https://github.com/MikkoH/bigwheel",
   "dependencies": {
-    "bw-router": "^1.1.0",
+    "bw-router": "^1.1.1",
     "bw-viewmediator": "^1.1.0",
-    "bw-vm": "^1.2.0",
+    "bw-vm": "^1.2.1",
     "dom-event": "git://github.com/mikkoh/dom-event"
   },
   "devDependencies": {
-    "promise": "^6.0.1"
+    "promise": "^6.0.1",
+    "tape": "^3.0.3"
   }
 }

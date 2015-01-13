@@ -85,9 +85,9 @@ bigwheel.prototype = {
 			// setup the view manager
 			this.vm = vm( this.s );
 
-			if( s.autoResize ) {
+			if( s.autoResize && global.innerWidth !== undefined && global.innerHeight !== undefined ) {
 
-				on( window, 'resize', this.onResize.bind( this ) );
+				on( global, 'resize', this.onResize.bind( this ) );
 
 				this.onResize();
 			}
@@ -184,7 +184,7 @@ bigwheel.prototype = {
 
 	onResize: function() {
 
-		this.resize( window.innerWidth, window.innerHeight );
+		this.resize( global.innerWidth, global.innerHeight );
 	}
 };
 
