@@ -12,8 +12,13 @@
   },
   "keywords": [
     "bigwheel",
-    "mvc",
-    "animation"
+    "application",
+    "framework",
+    "state",
+    "webgl",
+    "canvas",
+    "svg",
+    "mvc"
   ],
   "author": "Mikko Haapoja <me@mikkoh.com>",
   "license": "MIT",
