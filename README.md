@@ -1,4 +1,5 @@
 # bigwheel
+![bigwheel logo](https://raw.githubusercontent.com/bigwheel-framework/documentation/master/images/bigwheellogo.png)
 
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
@@ -13,6 +14,9 @@ bigwheel is an unopinionated, minimalist framework which handles frontend applic
 [![NPM](https://nodei.co/npm/bigwheel.png)](https://www.npmjs.com/package/bigwheel)
 
 ## Example
+
+Note this is not a "best practice" example but simply a concise example that shows many of the features of `bigwheel`. Refer to the documentation link above for best practices and other information.
+
 ```javascript
 var bigwheel = require('bigwheel');
 var Tween = require('gsap');
