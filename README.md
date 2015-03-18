@@ -1,93 +1,125 @@
-<a name="module_bigwheel"></a>
-#bigwheel
-<a name="module_bigwheel..bigwheel"></a>
-##class: bigwheel~bigwheel
-**Members**
+# bigwheel
 
-* [class: bigwheel~bigwheel](#module_bigwheel..bigwheel)
-  * [new bigwheel~bigwheel(settingsFunc)](#new_module_bigwheel..bigwheel)
-  * [bigwheel.init()](#module_bigwheel..bigwheel#init)
-  * [bigwheel.go(to)](#module_bigwheel..bigwheel#go)
-  * [bigwheel.resize(w, h)](#module_bigwheel..bigwheel#resize)
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-<a name="new_module_bigwheel..bigwheel"></a>
-###new bigwheel~bigwheel(settingsFunc)
-When instantiating bigwheel you must pass in a setup function.
+bigwheel is an unopinionated, minimalist framework which handles frontend application state. It can be used to organize your application into "sections"/pages which are brought in by routes. Animation is a first class citizen and is accounted for when managing application states. bigwheel does not conform to a specific render engine framework so a project which is based on the DOM, WebGL, Canvas2D, SVG, or even Console applications can be built using bigwheel.
 
-In this function you may do any preparation that must be done for your
-application such as creating a global Canvas element or something else.
+## Full Documentation
 
-The setup function must either return a settings object for bigwheel or
-this function must receive a callback which you will call with the settings
-object. Furthermore you can pass back a promise from this settings function
-which will receive the settings object.
+[https://github.com/bigwheel-framework/documentation](https://github.com/bigwheel-framework/documentation)
 
-The following documents what can be passed in the settings object:
+## Usage
+
+[![NPM](https://nodei.co/npm/bigwheel.png)](https://www.npmjs.com/package/bigwheel)
+
+## Example
 ```javascript
-{
-	///// REQUIRED /////
+var bigwheel = require('bigwheel');
+var Tween = require('gsap');
 
-	// routes defines all the routes for your website it can also define a 
-	// 404 section which will be opened if the route is incorrect
- routes: {
+// create our framework instance
+var framework = bigwheel( function(done) {
 
-		'/': someSection,
-		'/someOther': someOtherSection,
-		'404': sectionFourOhFour
- },
- 
- ///// OPTIONAL /////
- initSection: preSection, // this could be a section that is run always
- 						 // before routes are even evaluated. This is
- 						 // usefulf for site preloaders or landing pages
- 						 // such as age verification (something the user
- 						 // must see)
+  // the function passed to bigwheel should return
+  // a setting object or alternately you can pass
+  // the setting object to the callback defined as
+  // done. This is nice if you need to do assynchronous
+  // loading before content should be shown
+  return {
 
-	autoResize: true, // by default this value is true. When this value is
-					  // true a resize listener is added to the window
-					  // whenever the window changes size it's width and
-					  // height is passed to all instantiated sections
-	postHash: '#!', // this string is appended before the route. 
-					// by default it's value is '#!'
+    // define our routes
+    // routes are associated to "sections"
+    // sections are functions or objects
+    routes: {
+      '/': Section,
+      '/about': Section,
+      '/contact': Section
+    }
+  };
+});
+
+// this will start bigwheel and it will start resolving routes
+framework.init();
+
+// This is the definition for the sections which bigwheel will run
+// sections can define init, resize, animateIn, animateOut, destroy functions
+// these will methods will be called by bigwheel
+function Section() {
+
+  var el;
+  
+  return {
+
+    // the init function creates the view and initializes it
+    // after init finishes the view should not be visible
+    init: function(req, done) {
+      el = createEl(req);      
+      el.onclick = function() {
+        framework.go(getToSection(req));
+      };
+      done();
+    },
+
+    // the resize function will be called imediately after init
+    // here you can apply "responsive" calculations on your view
+    resize: function(width, height) {
+      var fontSize = width / 500 * 30;
+      el.style.fontSize = fontSize + 'px';
+      el.style.top = Math.round(( height - fontSize ) * 0.5) + 'px';
+    },
+
+    // in animateIn you'll animate in your hidden content that
+    // was created in init
+    animateIn: function(req, done) {
+      Tween.from(el, 1, {
+        y: -100, 
+        opacity: 0,
+        ease: Back.easeOut, 
+        onComplete: done
+      });
+    },
+
+    // in animateOut you'll animate out your content that
+    // was created in init
+    animateOut: function(req, done) {
+      Tween.to(el, 0.25, {
+        y: 100, 
+        opacity: 0, 
+        ease: Back.easeIn, 
+        onComplete: done
+      });
+    },
+
+    // in destroy you'll clean up the content which was
+    // created in init
+    destroy: function(req, done) {
+      el.parentNode.removeChild(el);
+    }
+  };
+}
+
+// this is just a utility function created for this example to create
+// an element which will be added to the dom and initialized
+function createEl(req) {
+  var el = document.createElement('a');
+  el.innerHTML = 'Click to go from "' + req.route + '" to "' + getToSection(req) + '"';
+  el.style.position = 'absolute';
+  el.style.cursor = 'pointer';
+  return document.body.appendChild(el);
+}
+
+// this function acts as almost like a model for this example
+// generally you'd either load your model from a server or
+// have a static model object
+function getToSection(req) {
+  return {
+    '/': '/about',
+    '/about': '/contact',
+    '/contact': '/'
+  }[ req.route ];
 }
 ```
 
-**Params**
+## License
 
-- settingsFunc `function` - This settings function will be used to
-initialize bigwheel.  
-
-**Scope**: inner class of [bigwheel](#module_bigwheel)  
-<a name="module_bigwheel..bigwheel#init"></a>
-###bigwheel.init()
-init must be called to start the framework. This was done to allow for
-a developer to have full control of when bigwheel starts doing it's thing.
-
-<a name="module_bigwheel..bigwheel#go"></a>
-###bigwheel.go(to)
-go can be called to go to another section.
-
-**Params**
-
-- to `String` - This is the route you want to go to.  
-
-**Example**  
-```javascript
-framework.go( '/landing' );
-```
-
-<a name="module_bigwheel..bigwheel#resize"></a>
-###bigwheel.resize(w, h)
-Resize can be called at any time. The values passed in for
-width and height will be passed to the currently instantiated
-sections.
-
-If `autoResize` was not passed in or it was true then resize
-will automatically be called when the window of the browser
-resizes.
-
-**Params**
-
-- w `Number` - width value you'd like to pass to the sections  
-- h `Number` - height value you'd like to pass to the sections  
-
+MIT, see [LICENSE.md](http://github.com/bigwheel-framework/bigwheel/blob/master/LICENSE) for details.
