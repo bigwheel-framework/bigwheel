@@ -27,18 +27,18 @@ test( 'testing framework', function( t ) {
             done();
           },
 
-          aniIn: function( req, done ) {
+          animateIn: function( req, done ) {
 
-            t.equal( req.route, '/', '"/" aniIn received "/"' );
+            t.equal( req.route, '/', '"/" animateIn received "/"' );
 
             done();
 
             framework.go( '/about' );
           },
 
-          aniOut: function( req, done ) {
+          animateOut: function( req, done ) {
 
-            t.equal( req.route, '/about', '"/" aniOut received "/about"' );
+            t.equal( req.route, '/about', '"/" animateOut received "/about"' );
 
             done();
           },
@@ -62,9 +62,9 @@ test( 'testing framework', function( t ) {
               done();
             },
 
-            aniIn: function( req, done ) {
+            animateIn: function( req, done ) {
 
-              t.equal( req.route, '/about', '"/about" aniIn received "/about"' );
+              t.equal( req.route, '/about', '"/about" animateIn received "/about"' );
 
               done();
             }
