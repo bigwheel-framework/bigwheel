@@ -29,7 +29,7 @@
   "dependencies": {
     "bw-router": "^1.1.1",
     "bw-viewmediator": "^2.0.0",
-    "bw-vm": "^2.0.0",
+    "bw-vm": "^2.0.1",
     "dom-event": "git://github.com/mikkoh/dom-event"
   },
   "devDependencies": {
