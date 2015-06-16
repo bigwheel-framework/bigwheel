@@ -1,9 +1,10 @@
 /** @module bigwheel */
 
-var vm = require( 'bw-vm' ),
-	viewmediator = require( 'bw-viewmediator' ),
-	router = require( 'bw-router' ),
-	on = require( 'dom-event' );
+var vm = require('bw-vm');
+var viewmediator = require('bw-viewmediator');
+var router = require('bw-router');
+var on = require('dom-event');
+
 /**
  * When instantiating bigwheel you must pass in a setup function.
  *
@@ -23,7 +24,8 @@ var vm = require( 'bw-vm' ),
  * 	// routes defines all the routes for your website it can also define a 
  * 	// 404 section which will be opened if the route is incorrect
  *  routes: {
- *
+ *  	postHash: '#!', // this string is appended before the route. 
+ *  	                // by default it's value is '#!'
  * 		'/': someSection,
  * 		'/someOther': someOtherSection,
  * 		'404': sectionFourOhFour
@@ -40,8 +42,6 @@ var vm = require( 'bw-vm' ),
  * 					  // true a resize listener is added to the window
  * 					  // whenever the window changes size it's width and
  * 					  // height is passed to all instantiated sections
- * 	postHash: '#!', // this string is appended before the route. 
- * 					// by default it's value is '#!'
  * }
  * ```
  * 
@@ -49,13 +49,13 @@ var vm = require( 'bw-vm' ),
  * @param  {Function} settingsFunc This settings function will be used to
  * initialize bigwheel.
  */
-function bigwheel( settingsFunc ) {
+function bigwheel(settingsFunc) {
 
-	if( !( this instanceof bigwheel ) )
-		return new bigwheel( settingsFunc );
+	if(!(this instanceof bigwheel))
+		return new bigwheel(settingsFunc);
 
 	this.settingsFunc = settingsFunc;
-};
+}
 
 bigwheel.prototype = {
 
@@ -65,46 +65,103 @@ bigwheel.prototype = {
 	 */
 	init: function() {
 
-		var onSettingComplete = function( settings ) {
+		var onSettingComplete = function(settings) {
 
 			var s = this.s = settings;
 
-			if( s === undefined )
-				throw new Error( 'Your settings function must return a settings Object' );
+			if(s === undefined)
+				throw new Error('Your settings function must return a settings Object');
 
-			if( s.routes === undefined )
-				throw new Error( 'Your settings object must define routes' );
+			if(s.routes === undefined)
+				throw new Error('Your settings object must define routes');
 
 			s.autoResize = s.autoResize === undefined ? true : s.autoResize;
 
 			// setup the router
-			this.onRouteCallBack = settings.onRoute;
-			settings.routes.onRoute = this.show.bind( this );
-			this.router = router( settings.routes );
+			this.router = settings.router || router(settings.routes);
+			this.router.on('route', this.show.bind(this));
+
+			// handle adding and removing sub routers to the global
+			// object for easier retrieval
+			this.subFrameworks = {};
 
 			// setup the view manager
-			this.vm = vm( this.s );
+			this.vm = vm(this.s);
 
-			if( s.autoResize && global.innerWidth !== undefined && global.innerHeight !== undefined ) {
+			// check if 
+			if(s.autoResize && global.innerWidth !== undefined && global.innerHeight !== undefined) {
 
-				on( global, 'resize', this.onResize.bind( this ) );
+				on(global, 'resize', this.onResize.bind(this));
 
 				this.onResize();
 			}
 			
-			if( s.initSection )
-				this.show( s.initSection.bind( undefined, this.router.init.bind( this.router ) ) );
+			// handle if there is an init section this should be shown even before
+			// the router resolves
+			if(s.initSection)
+				this.show(s.initSection.bind(undefined, this.router.init.bind(this.router)));
 			else
 				this.router.init();
-		}.bind( this );
+		}.bind(this);
 
 
-		var rVal = this.settingsFunc( onSettingComplete );
+		var rVal = this.settingsFunc(onSettingComplete);
 
-		if( rVal && rVal.then )
-			rVal.then( onSettingComplete );
-		else if( rVal && rVal.routes )
-			onSettingComplete( rVal );
+		// check if promises are used instead
+		// it might be good to remove this since theres no
+		// need for promises in this case
+		if(rVal && rVal.then)
+			rVal.then(onSettingComplete);
+		// check if just an object was returned which has .routes
+		else if(rVal && rVal.routes)
+			onSettingComplete(rVal);
+
+		return this;
+	},
+
+	sub: function(name, routes) {
+
+		var subFrameworks = this.subFrameworks;
+		var sub;
+		var settings;
+
+		// if there's a subframework with this same name just return it
+		if(subFrameworks[ name ]) {
+
+			sub = subFrameworks[ name ];
+		// otherwise if we have routes then create a new one
+		} else if(routes) {
+
+			// if there is already a subframework with this name just return it
+			settings = {
+				routes: routes
+			};
+
+			settings.router = this.router.sub(routes);
+
+			sub = new bigwheel(function() {
+				return settings;
+			});
+
+			// if a name was passed save it for later reference
+			if(name) {
+				subFrameworks[ name ] = sub;
+
+				// if a sub router gets destroyed we should check if its
+				// for this sub framework and destroy it
+				this.router.on('sub_destroy', function(info) {
+
+					if(info.router === settings.router) {
+						subFrameworks[ name ].destroy();
+						delete subFrameworks[ name ];
+					}				
+				});
+			}
+
+			sub.init();
+		}
+
+		return sub;
 	},
 
 	/**
@@ -114,12 +171,14 @@ bigwheel.prototype = {
 	 *
 	 * @example
 	 * ```javascript
-	 * framework.go( '/landing' );
+	 * framework.go('/landing');
 	 * ```
 	 */
-	go: function( to ) {
+	go: function(to) {
 
-		this.router.go( to );
+		this.router.go(to);
+
+		return this;
 	},
 
 	/**
@@ -142,49 +201,55 @@ bigwheel.prototype = {
 	 * @param  {Number} w width value you'd like to pass to the sections
 	 * @param  {Number} h height value you'd like to pass to the sections
 	 */
-	resize: function( w, h ) {
+	resize: function(w, h) {
 
-		this.vm.resize( w, h );
+		this.vm.resize(w, h);
 	},
 
-	show: function( content, data ) {
+	show: function(info) {
+		var section = info.section;
+		var req = info.route;
+
 		// this is the original router callback passed in
-		if( this.onRouteCallBack )
-			this.onRouteCallBack( content, data );
+		if(this.onRouteCallBack)
+			this.onRouteCallBack(section, req);
 
 
-		// check if content is an array or function or object
-		if( Array.isArray( content ) ) {
+		// check if section is an array or function or object
+		if(Array.isArray(section)) {
 
-			var contents = [];
+			var sections = [];
 
-			for( var i = 0, len = content.length; i < len; i++ ) {
+			for(var i = 0, len = section.length; i < len; i++) {
 
-				if( typeof content[ i ] == 'object' ) 
-					contents[ i ] = content[ i ];
-				else if( typeof content[ i ] == 'function' )
-					contents[ i ] = new content[ i ];
+				if(typeof section[ i ] == 'object') {
+
+					sections[ i ] = section[ i ];
+				} else if(typeof section[ i ] == 'function') {
+
+					sections[ i ] = new section[ i ]();
+				}	
 			}
 
-			this.doShow( viewmediator.apply( undefined, contents ), data );
-		} else if( typeof content == 'object' ) {
+			this.doShow(viewmediator.apply(undefined, sections), req);
+		} else if(typeof section == 'object') {
 
-			this.doShow( content, data );
-		} else if( typeof content == 'function' ) {
+			this.doShow(section, req);
+		} else if(typeof section == 'function') {
 
-			this.doShow( new content, data );
+			this.doShow(new section(), req);
 		}
 
 	},
 
-	doShow: function( content, data ) {
+	doShow: function(section, req) {
 
-		this.vm.show( content, data );
+		this.vm.show(section, req);
 	},
 
 	onResize: function() {
 
-		this.resize( global.innerWidth, global.innerHeight );
+		this.resize(global.innerWidth, global.innerHeight);
 	}
 };
 
