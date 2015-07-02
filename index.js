@@ -99,7 +99,7 @@ bigwheel.prototype = {
 			// handle if there is an init section this should be shown even before
 			// the router resolves
 			if(s.initSection)
-				this.show(s.initSection.bind(undefined, this.router.init.bind(this.router)));
+				this.show({section: s.initSection.bind(undefined, this.router.init.bind(this.router))});
 			else
 				this.router.init();
 		}.bind(this);

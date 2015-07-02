@@ -4,7 +4,7 @@
   "description": "bigwheel is an unopinionated, minimalist frontend framework that manages application state",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",
