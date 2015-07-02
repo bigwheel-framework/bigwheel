@@ -113,6 +113,7 @@ test('testing sub frameworks', function(t) {
     return {
       init: function(req, done) {
         sub = framework.sub(SUB_ID, {
+          '/': '/1',
           '/:id': { section: sectionSub, duplicate: true },
           '404': { section: sectionSub }
         });
