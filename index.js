@@ -80,6 +80,8 @@ bigwheel.prototype.init = function() {
 
 		s.autoResize = s.autoResize === undefined ? true : s.autoResize;
 
+		this.previousRoute = undefined;
+
 		// setup the router
 		this.router = settings.router || router(settings.routes);
 		this.router.on('route', this.show.bind(this));
@@ -223,7 +225,7 @@ bigwheel.prototype.resize = function(w, h) {
 bigwheel.prototype.show = function(info) {
 	var section = info.section;
 	var req = info.route;
-
+	if (req) req.previous = this.previousRoute;
 	// this is the original router callback passed in
 	if(this.onRouteCallBack)
 		this.onRouteCallBack(section, req);
@@ -253,6 +255,8 @@ bigwheel.prototype.show = function(info) {
 
 		this.doShow(new section(), req);
 	}
+
+	this.previousRoute = info.route;
 
 };
 
