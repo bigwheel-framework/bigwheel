@@ -222,7 +222,8 @@ bigwheel.prototype.resize = function(w, h) {
 
 bigwheel.prototype.show = function(info) {
 	var section = info.section;
-	var req = info.route;
+	var req = info.route || {};
+	req.framework = this;
 
 	// this is the original router callback passed in
 	if(this.onRouteCallBack)
