@@ -82,21 +82,17 @@ bigwheel.prototype.init = function() {
 
 		this.previousRoute = undefined;
 
+		this.depth = [];
+		this.vms = [];
+		this.routes = {};
+		this.parseRoutes(settings.routes);
+
 		// setup the router
-		this.router = settings.router || router(settings.routes);
+		this.router = router(this.routes);
 		this.router.on('route', this.show.bind(this));
 
 		// Re-dispatch routes
 		this.router.on('route',this.emit.bind(this,'route'));
-		this.router.on('sub_create',this.emit.bind(this,'sub_create'));
-		this.router.on('sub_destroy',this.emit.bind(this,'sub_destroy'));
-
-		// handle adding and removing sub routers to the global
-		// object for easier retrieval
-		this.subFrameworks = {};
-
-		// setup the view manager
-		this.vm = vm(this.s);
 
 		// check if 
 		if(s.autoResize && global.innerWidth !== undefined && global.innerHeight !== undefined) {
@@ -129,51 +125,22 @@ bigwheel.prototype.init = function() {
 	return this;
 };
 
-
-
-bigwheel.prototype.sub = function(name, routes) {
-
-	var subFrameworks = this.subFrameworks;
-	var sub;
-	var settings;
-
-	// if there's a subframework with this same name just return it
-	if(subFrameworks[ name ]) {
-
-		sub = subFrameworks[ name ];
-	// otherwise if we have routes then create a new one
-	} else if(routes) {
-
-		// if there is already a subframework with this name just return it
-		settings = {
-			routes: routes
-		};
-
-		settings.router = this.router.sub(routes);
-
-		sub = new bigwheel(function() {
-			return settings;
-		});
-
-		// if a name was passed save it for later reference
-		if(name) {
-			subFrameworks[ name ] = sub;
-
-			// if a sub router gets destroyed we should check if its
-			// for this sub framework and destroy it
-			this.router.on('sub_destroy', function(info) {
-
-				if(info.router === settings.router) {
-					subFrameworks[ name ].destroy();
-					delete subFrameworks[ name ];
-				}				
-			});
+bigwheel.prototype.parseRoutes = function(routes,prefix) {
+	var depth = (prefix || '').split('/').length;
+	if (this.vms.length<depth) this.vms.push(vm(this.s));
+	prefix = prefix || "";
+	for (var key in routes) {
+		if (key.charAt(0)==='/') {
+			if (prefix) routes[key].parent = prefix;
+			this.routes[prefix+key] = routes[key];
+			if (routes[key].routes) {
+				this.parseRoutes(routes[key].routes,prefix+key);
+				delete routes[key].routes;
+			}
+		} else {
+			this.routes[key] = routes[key];
 		}
-
-		sub.init();
 	}
-
-	return sub;
 };
 
 /**
@@ -186,9 +153,9 @@ bigwheel.prototype.sub = function(name, routes) {
  * framework.go('/landing');
  * ```
  */
-bigwheel.prototype.go = function(to) {
+bigwheel.prototype.go = function(to,options) {
 
-	this.router.go(to);
+	this.router.go(to,options);
 
 	return this;
 };
@@ -198,8 +165,6 @@ bigwheel.prototype.go = function(to) {
  */
 bigwheel.prototype.destroy = function() {
 
-	this.router.removeAllListeners('sub_destroy');
-	this.router.removeAllListeners('sub_create');
 	this.router.removeAllListeners('route');
 	this.router.destroy();
 
@@ -218,8 +183,9 @@ bigwheel.prototype.destroy = function() {
  * @param  {Number} h height value you'd like to pass to the sections
  */
 bigwheel.prototype.resize = function(w, h) {
-
-	this.vm.resize(w, h);
+	for (var i=0; i<this.vms.length; i++) {
+		this.vms[i].resize(w,h);
+	}
 };
 
 bigwheel.prototype.show = function(info) {
@@ -228,43 +194,49 @@ bigwheel.prototype.show = function(info) {
 	req.previous = this.previousRoute;
 	req.framework = this;
 
-	// this is the original router callback passed in
-	if(this.onRouteCallBack)
-		this.onRouteCallBack(section, req);
-
-
-	// check if section is an array or function or object
-	if(Array.isArray(section)) {
-
-		var sections = [];
-
-		for(var i = 0, len = section.length; i < len; i++) {
-
-			if(typeof section[ i ] == 'object') {
-
-				sections[ i ] = section[ i ];
-			} else if(typeof section[ i ] == 'function') {
-
-				sections[ i ] = new section[ i ]();
-			}	
+	if (req.route) {
+		var depth = [this.rebuildRoute(req.route,info.path)];
+		var views = [section.section || section];
+		while (section.parent) {
+			depth.unshift(this.rebuildRoute(section.parent,info.path));
+			section = this.routes[section.parent];
+			views.unshift(section.section || section);
 		}
 
-		this.doShow(viewmediator.apply(undefined, sections), req);
-	} else if(typeof section == 'object') {
-
-		this.doShow(section, req);
-	} else if(typeof section == 'function') {
-
-		this.doShow(new section(), req);
+		var prevDepth = this.depth;
+		this.depth = depth;
+		var total = Math.max(prevDepth.length,depth.length);
+		for (var i=0; i<total; i++) {
+			if (i>depth.length-1) {
+				this.vms[i].clear(req);
+			} else if (prevDepth[i]!=depth[i]) {
+				this.vms[i].show(this.parseSection(views[i]),req);
+			}
+		}
+	} else {
+		this.vms[0].show(this.parseSection(section.section || section),req);
 	}
-
+	
 	this.previousRoute = info.route;
-
 };
 
-bigwheel.prototype.doShow = function(section, req) {
+bigwheel.prototype.rebuildRoute = function(route,path) {
+	var path = path.split('/')
+	path.length = route.split('/').length;
+	return path.join('/');
+};
 
-	this.vm.show(section, req);
+bigwheel.prototype.parseSection = function(section) {
+	if (Array.isArray(section)) {
+		for (var i=0; i<section.length; i++) {
+			if (typeof section[i] == 'function') section[i] = new section[i]();
+		}
+		return viewmediator.apply(undefined,section);
+	} else if (typeof section == 'function') {
+		return new section();
+	} else {
+		return section;
+	}
 };
 
 bigwheel.prototype.onResize = function() {
