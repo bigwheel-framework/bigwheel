@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/bigwheel-framework/bigwheel",
   "dependencies": {
-    "bw-router": "^2.0.0",
+    "bw-router": "^2.0.1",
     "bw-viewmediator": "^2.2.0",
     "bw-vm": "^2.1.0",
     "dom-event": "git://github.com/mikkoh/dom-event"
