@@ -158,8 +158,8 @@ test('testing sub frameworks', function(t) {
         '/': '/gallery',
         '/end': end,
         '/gallery': {section: gallery, routes: {
-          '/:type': {section: galleryType, duplcate: true, routes: {
-            '/:image': {section: galleryTypeImage, duplcate: true}
+          '/:type': {section: galleryType, duplicate: true, routes: {
+            '/:image': {section: galleryTypeImage, duplicate: true}
           }}
         }}
       }
