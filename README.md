@@ -34,10 +34,15 @@ var framework = bigwheel( function(done) {
     // define our routes
     // routes are associated to "sections"
     // sections are functions or objects
+    // Any route can contain a routes object to specify subroutes. This example adds the '/Gallery' route and '/Gallery/:id'
     routes: {
       '/': Section,
       '/about': Section,
-      '/contact': Section
+      '/contact': Section,
+      '/Gallery': {section: Section, routes: {
+          '/:id': {section: Section}
+        }
+      }
     }
   };
 });
