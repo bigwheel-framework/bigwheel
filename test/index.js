@@ -171,4 +171,7 @@ function reset() {
   if(global.location) {
     global.location.hash = '';
   }
+  if (global.history && global.history.pushState) {
+    global.history.pushState({},'','/');
+  }
 }
